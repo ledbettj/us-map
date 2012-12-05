@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css">
+    <script src="/scripts/lib/three.js"></script>
+    <script src="/scripts/lib/trackball.js"></script>
+    <script src="/scripts/lib/d3v2.js"></script>
+    <script src="/scripts/lib/underscore.js"></script>
+    <script src="/scripts/us-map.js"></script>
+    <script src="/scripts/election-overlay.js"></script>
+ </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      window.overlays = {};
+
+      d3.json('/data/2012-election.json', function(json) {
+        var o = new ElectionOverlay(json);
+        var c = document.getElementById('container');
+
+        window.map = new Map({
+          width:  c.clientWidth,
+          height: c.clientHeight - 4,
+          target: c,
+          overlay: o,
+          axes: true
+        });
+
+        window.map.run();
+
+        window.overlays.election = o;
+
+        window.onresize = function(event) {
+          m.resize(c.clientWidth, c.clientHeight - 4);
+        };
+
+        d3.json('/data/2000-race.json', function(json) {
+          window.overlays.race = new RaceOverlay(json);
+        });
+
+        d3.json('/data/2010-poverty.json', function(json) {
+          window.overlays.poverty = new PovertyOverlay(json);
+        });
+
+      });
+
+
+    </script>
+  </body>
+</html>
