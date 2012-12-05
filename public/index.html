@@ -8,6 +8,7 @@
     <script src="/scripts/lib/lodash.js"></script>
     <script src="/scripts/us-map.js"></script>
     <script src="/scripts/election-overlay.js"></script>
+    <script src="/scripts/poverty-overlay.js"></script>
  </head>
   <body>
     <div id="container"></div>
@@ -31,12 +32,14 @@
         window.overlays.election = o;
 
         window.onresize = function(event) {
-          m.resize(c.clientWidth, c.clientHeight - 4);
+          window.map.resize(c.clientWidth, c.clientHeight - 4);
         };
 
+        /*
         d3.json('/data/2000-race.json', function(json) {
           window.overlays.race = new RaceOverlay(json);
         });
+        */
 
         d3.json('/data/2010-poverty.json', function(json) {
           window.overlays.poverty = new PovertyOverlay(json);
