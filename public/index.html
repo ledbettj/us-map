@@ -11,14 +11,35 @@
     <script src="/scripts/poverty-overlay.js"></script>
  </head>
   <body>
+    <select id="dataset-selector"></select>
     <div id="container"></div>
     <script>
       window.overlays = {};
 
+      function addOverlay(key, overlay, initial) {
+        var elem = d3.select('#dataset-selector')
+          .append('option').attr('value', key)
+          .text(overlay.name);
+        if (initial) {
+          elem.attr('selected', '');
+        }
+      }
+
+      d3.select('select')
+        .on('change', function(d) {
+          var opts = d3.select(this).selectAll('option')[0];
+          for(var i = 0; i < opts.length; ++i) {
+            if (opts[i].selected) {
+              window.map.overlay = window.overlays[opts[i].value];
+              break;
+            }
+          }
+        });
+
       d3.json('/data/2012-election.json', function(json) {
         var o = new ElectionOverlay(json);
         var c = document.getElementById('container');
-
+        addOverlay('election', o, true);
         window.map = new Map({
           width:  c.clientWidth,
           height: c.clientHeight - 4,
@@ -38,11 +59,13 @@
         /*
         d3.json('/data/2000-race.json', function(json) {
           window.overlays.race = new RaceOverlay(json);
+          addOverlay('race', window.overlays.race);
         });
         */
 
         d3.json('/data/2010-poverty.json', function(json) {
           window.overlays.poverty = new PovertyOverlay(json);
+          addOverlay('poverty', window.overlays.poverty);
         });
 
       });
