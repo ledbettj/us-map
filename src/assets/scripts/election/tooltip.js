@@ -115,7 +115,7 @@ define(['d3v2'], function(d3) {
   };
 
   Tooltip.prototype.hide = function() {
-    this.g.attr('transform', 'translate(-300)');
+    this.move(-1000, -1000);
   };
 
   Tooltip.prototype.move = function(x, y) {

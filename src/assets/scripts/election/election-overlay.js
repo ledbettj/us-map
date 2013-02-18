@@ -98,10 +98,12 @@ define(['d3v2', 'underscore'], function(d3, _) {
   };
 
   ElectionOverlay.prototype.mouseMove = function(node, d, i, map) {
-    map.tooltip.move(
-      d3.event.x || d3.event.layerX,
-      d3.event.y || d3.event.layerY
-    );
+    if (this.data(d.id)) {
+      map.tooltip.move(
+        d3.event.x || d3.event.layerX,
+        d3.event.y || d3.event.layerY
+      );
+    }
   };
 
   return ElectionOverlay;
