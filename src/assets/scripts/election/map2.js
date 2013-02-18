@@ -1,7 +1,7 @@
 /*jshint undef:true browser:true devel:true*/
 /*global define */
 
-define(['underscore', 'd3.v3', 'election/tooltip'], function(_, d3, Tooltip){
+define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, Tooltip){
 
   var Map = function(options) {
     this._overlay = options.overlay;

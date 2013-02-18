@@ -1,6 +1,6 @@
 .county {
   stroke-width: 1;
-  fill-rule: even-odd;
+  fill-rule: evenodd;
 }
 
 .state {

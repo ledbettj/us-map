@@ -9,6 +9,13 @@
     'd3.v3': {
       exports: 'd3'
     },
+    'd3.geo.projection': {
+      deps: ['d3.v3'],
+      exports: 'd3'
+    },
+    'queue': {
+      exports: 'queue'
+    },
     'underscore': {
       exports: '_'
     }

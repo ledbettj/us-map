@@ -2,8 +2,8 @@
 /*global require */
 
 require(['d3.v3', 'election/map2', 'election/election-overlay',
-         'election/poverty-overlay', 'election/race-overlay', 'domReady'],
-function(d3, Map, ElectionOverlay, PovertyOverlay, RaceOverlay) {
+         'election/poverty-overlay', 'election/race-overlay', 'queue', 'domReady'],
+function(d3, Map, ElectionOverlay, PovertyOverlay, RaceOverlay, queue) {
   var body = d3.select('body').node();
 
   var App = {
@@ -24,26 +24,23 @@ function(d3, Map, ElectionOverlay, PovertyOverlay, RaceOverlay) {
     }
   }
 
-  d3.json('data/2012-election.json', function(json) {
-    dataSetReady('election',new ElectionOverlay(json, {}), true);
+  queue()
+    .defer(d3.json, 'data/2012-election.json')
+    .defer(d3.json, 'data/2000-race.json')
+    .defer(d3.json, 'data/2010-poverty.json')
+    .await(function(err, election, race, poverty) {
+      dataSetReady('election', new ElectionOverlay(election, {}), true);
+      dataSetReady('race', new RaceOverlay(race, {}), false);
+      dataSetReady('poverty', new PovertyOverlay(poverty, {}), false);
 
-    App.map = new Map({
-      target:    '#map',
-      scale:     Math.min(body.clientWidth, body.clientHeight),
-      translate: [body.clientWidth / 2, body.clientHeight / 2],
-      overlay:   App.overlays.election
+      App.map = new Map({
+        target:    '#map',
+        scale:     Math.min(body.clientWidth, body.clientHeight),
+        translate: [body.clientWidth / 2, body.clientHeight / 2],
+        overlay:   App.overlays.election
+      });
+
     });
-
-  });
-
-  d3.json('data/2000-race.json', function(json) {
-    dataSetReady('race', new RaceOverlay(json, {}));
-  });
-
-  d3.json('data/2010-poverty.json', function(json) {
-    dataSetReady('poverty', new PovertyOverlay(json, {}));
-
-  });
 
   d3.select('select')
     .on('change', function(d) {
