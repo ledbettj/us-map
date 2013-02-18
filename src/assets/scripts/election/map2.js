@@ -138,7 +138,9 @@ define(['underscore', 'd3v2', 'election/tooltip'], function(_, d3, Tooltip){
         .scale(d3.event.scale);
     }
 
-    this.svg.selectAll('path').attr('d', this.path);
+    this.svg.selectAll('path.county').attr('d', this.path);
+    this.svg.selectAll('path.state').attr('d', this.path);
+
   };
 
 
