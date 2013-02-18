@@ -1,7 +1,7 @@
 /*jshint undef:true browser:true devel:true*/
 /*global define */
 
-define(['d3v2', 'underscore'], function(d3, _) {
+define(['d3.v3', 'underscore'], function(d3, _) {
 
   var ElectionOverlay = function(data, options) {
     this.name    = '2012 Presidental Election';

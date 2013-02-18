@@ -2,7 +2,7 @@
 /*global define */
 
 
-define(['d3v2'], function(d3) {
+define(['d3.v3'], function(d3) {
   var Tooltip = function(svg, options) {
 
     this.options = {

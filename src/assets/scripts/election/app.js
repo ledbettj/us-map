@@ -1,7 +1,7 @@
 /*jshint undef:true browser:true devel:true*/
 /*global require */
 
-require(['d3v2', 'election/map2', 'election/election-overlay',
+require(['d3.v3', 'election/map2', 'election/election-overlay',
          'election/poverty-overlay', 'election/race-overlay', 'domReady'],
 function(d3, Map, ElectionOverlay, PovertyOverlay, RaceOverlay) {
   var body = d3.select('body').node();
