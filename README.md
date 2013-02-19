@@ -1,4 +1,4 @@
-us-map
+US Map
 ======
 
 An interactive county-level map of the United States using d3.js supporting multiple data sets.
