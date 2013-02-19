@@ -73,3 +73,8 @@ select {
   outline: none;
 }
 
+.gh-link {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+}
