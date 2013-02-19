@@ -3,33 +3,35 @@
 
 define(['d3.v3', 'underscore'], function(d3, _) {
 
+  /* a county-by-county breakdown of the 2012 presidential election results */
   var ElectionOverlay = function(data, options) {
     this.name    = '2012 Presidental Election';
     this.options = options || {};
     this._data   = data;
     this.parties = {
-      dem: {label: 'Obama',   color: '#000088'},
-      gop: {label: 'Romney',  color: '#880000'},
-      lib: {label: 'Johnson', color: '#daca00'},
-      grn: {label: 'Stein',   color: '#008800'},
-      jp:  {label: 'Goode',   color: '#880088'},
-      psl: {label: 'Lindsay', color: '#ff8800'},
-      npd: {label: 'Other',   color: '#c0c0c0'}
+      dem: {label: 'Obama',   color: '#000088'}, /* Democrat      */
+      gop: {label: 'Romney',  color: '#880000'}, /* Republican    */
+      lib: {label: 'Johnson', color: '#daca00'}, /* Libertarian   */
+      grn: {label: 'Stein',   color: '#008800'}, /* Green Party   */
+      jp:  {label: 'Goode',   color: '#880088'}, /* Justice Party */
+      psl: {label: 'Lindsay', color: '#ff8800'}, /* Party for Socialism & Liberation */
+      npd: {label: 'Other',   color: '#c0c0c0'}  /* Unaffiliated  */
     };
 
-    /* calculate total number of voters for each county, and pre-compute
-     * how to color this county. */
     _(this._data).each(function(votes, fips) {
 
       if (!votes.total) {
+        /* calculate the total number of voters for this county */
         this._data[fips].total = _(votes).reduce(function(total, voteCount) {
           return total + voteCount;
         });
       }
 
       if (!votes.color) {
+        /* calculate how to color this county based on the votes. */
         this._data[fips].color = d3.rgb(
           255 * votes.gop / votes.total,
+          /* count all non republican/democat votes as 3rd party */
           255 * (votes.total - votes.gop - votes.dem) / votes.total,
           255 * votes.dem / votes.total
         );
@@ -38,10 +40,14 @@ define(['d3.v3', 'underscore'], function(d3, _) {
 
   };
 
+  /* return the breakdown of the votes for the county represented by the given
+   * FIPS number, or 'undefined' if we don't have any data for that county. */
   ElectionOverlay.prototype.data = function(fips) {
     return this._data[Number(fips)];
   };
 
+  /* Given a county FIPS id, return it's associated color based on the voting
+   * breakdown calculate earlier. */
   ElectionOverlay.prototype.color = function(fips) {
     var votes = this.data(fips);
     return votes ? votes.color : d3.rgb(0xc0, 0xc0, 0xc0);
@@ -69,6 +75,7 @@ define(['d3.v3', 'underscore'], function(d3, _) {
 
     var votes = this.data(d.id);
 
+    /* if there's no data associated with this county, don't do anything. */
     if (!votes) {
       map.tooltip.hide();
       return;
@@ -98,6 +105,7 @@ define(['d3.v3', 'underscore'], function(d3, _) {
   };
 
   ElectionOverlay.prototype.mouseMove = function(node, d, i, map) {
+    /* only move the tooltip if this county has associated data. */
     if (this.data(d.id)) {
       map.tooltip.move(
         d3.event.x || d3.event.layerX,
