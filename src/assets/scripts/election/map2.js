@@ -5,6 +5,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip', 'queue', 'topojso
 
   var Map = function(options) {
     this._overlay = options.overlay;
+    this._ready   = false;
 
     this.projection = d3.geo.albersUsa()
       .scale(options.scale)
@@ -36,6 +37,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip', 'queue', 'topojso
       .await(function(err, jsonCounties, jsonStates) {
         this.json.counties = topojson.object(jsonCounties, jsonCounties.objects['us-counties']).geometries;
         this.json.states   = topojson.object(jsonStates, jsonStates.objects['us-states']).geometries;
+        this._ready = true;
         this.stopLoading();
         this.render();
       }.bind(this));
@@ -81,10 +83,20 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip', 'queue', 'topojso
     set: function(value) {
       if (this._overlay !== value) {
         this._overlay = value;
-        this.tooltip.hide();
-        this.tooltip.reset();
-        this.render();
+        if (this.ready) {
+          this.tooltip.hide();
+          this.tooltip.reset();
+          this.render();
+        }
       }
+    },
+    enumerable:   false,
+    configurable: false
+  });
+
+  Object.defineProperty(Map.prototype, 'ready', {
+    get: function() {
+      return this._ready;
     },
     enumerable:   false,
     configurable: false
@@ -94,8 +106,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip', 'queue', 'topojso
   Map.prototype.render = function() {
     var self = this;
     var noop = function() {};
-
-    var o = this.overlay;
+    var o = this.overlay || {};
 
     this.counties.selectAll('path')
       .data(this.json.counties)
