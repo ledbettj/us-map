@@ -13,6 +13,9 @@
       deps: ['d3.v3'],
       exports: 'd3'
     },
+    'topojson': {
+      exports: 'topojson'
+    },
     'queue': {
       exports: 'queue'
     },

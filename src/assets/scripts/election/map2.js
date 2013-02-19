@@ -1,7 +1,7 @@
 /*jshint undef:true browser:true devel:true*/
 /*global define */
 
-define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, Tooltip){
+define(['underscore', 'd3.geo.projection', 'election/tooltip', 'queue', 'topojson'], function(_, d3, Tooltip, queue, topojson) {
 
   var Map = function(options) {
     this._overlay = options.overlay;
@@ -28,16 +28,17 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, 
 
     this.json = {};
     this.tooltip = new Tooltip(this.svg, {});
+
     /* loading the json should only be done once. */
-    d3.json('data/us-counties.json', function(jsonCounties) {
-      d3.json('data/us-states.json', function(jsonStates) {
-        this.json.counties = jsonCounties;
-        this.json.states   = jsonStates;
+    queue()
+      .defer(d3.json, 'data/us-counties.topo.json')
+      .defer(d3.json, 'data/us-states.topo.json')
+      .await(function(err, jsonCounties, jsonStates) {
+        this.json.counties = topojson.object(jsonCounties, jsonCounties.objects['us-counties']).geometries;
+        this.json.states   = topojson.object(jsonStates, jsonStates.objects['us-states']).geometries;
         this.stopLoading();
         this.render();
       }.bind(this));
-    }.bind(this));
-
   };
 
   Map.prototype.startLoading = function(translate) {
@@ -97,7 +98,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, 
     var o = this.overlay;
 
     this.counties.selectAll('path')
-      .data(this.json.counties.features)
+      .data(this.json.counties)
       .enter()
         .append('svg:path')
           .attr('d', this.path)
@@ -105,7 +106,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, 
           .attr('id', function(d) { return 'county-fips-' + d.id; });
 
     this.counties.selectAll('path')
-      .data(this.json.counties.features)
+      .data(this.json.counties)
       .on('mouseover', function(d, i) {
         return o.mouseOver ? o.mouseOver(this, d, i, self) : null;
       })
@@ -122,7 +123,7 @@ define(['underscore', 'd3.geo.projection', 'election/tooltip'], function(_, d3, 
       .style('stroke-opacity', o.strokeOpacity ? o.strokeOpacity.bind(o) : noop);
 
     this.states.selectAll('path')
-      .data(this.json.states.features)
+      .data(this.json.states)
       .enter()
         .append('svg:path')
           .attr('d', this.path)
