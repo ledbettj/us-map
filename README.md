@@ -9,7 +9,7 @@ multiple data sets.  The currently included sets are:
 * 2010 Poverty Levels
 
 A live version is hosted on my website at
-[us-map.throttle.io](http://us-map.throttle.io/).
+[projects.throttle.io](http://projects.throttle.io/us-map)
 
 ![Example Screenshot](http://ledbettj.github.com/us-map/images/screenshot.png)
 
